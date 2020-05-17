@@ -11,6 +11,8 @@ struct Tree
     vector <vector<int>> reducedMatrix;
     vector <int> visited;
 
+    vector <vector <int>> matrix;
+
     Tree *left;
     Tree *right;
 
@@ -27,14 +29,10 @@ vector <vector <int>> adjMatrix =
         { 7,   6,   9,   6,   INT_MAX }
 };
 
-Tree* create(int costOfNode)
-{
-    Tree *node = new Tree;
+                                                                                            /* --------------------------------------------------------------------------*/
 
-    node -> cost = costOfNode;
-    node -> left = NULL;
-    node -> right = NULL;
-}
+
+                                                                                            /* --------------------------------------------------------------------------*/
 
 void display()
 {
@@ -49,12 +47,19 @@ void display()
     cout<<endl;
 }
 
+                                                                                            /* --------------------------------------------------------------------------*/
+
+
 void setInfinity(int nodeNumber, int row, int col)
 {
 //    for(int i=0; i<visited.size()-1; i++)
 //    {
 //        adjMatrix[nodeNumber][visited[i]] = INT_MAX;
 //    }
+
+
+/* Sub-tours not eliminated */
+
 
     for(int j=0; j<row; j++)
     {
@@ -67,15 +72,34 @@ void setInfinity(int nodeNumber, int row, int col)
     }
 }
 
+                                                                                            /* --------------------------------------------------------------------------*/
+
 int find_RowCol_Min()
 {
     int minValue = INT_MAX;
     int rowMin = 0;
     int colMin = 0;
 
+    vector <pair<int, int> > indexPair;              /* Vector of pairs - Indices where there are zeroes */
+    pair <int, int> indices;
+
     for(int i=0; i<adjMatrix.size(); i++)
     {
-        minValue = *min_element(adjMatrix[i].begin(),adjMatrix[i].end());
+        //minValue = *min_element(adjMatrix[i].begin(),adjMatrix[i].end());
+
+        minValue = INT_MAX;
+
+        for(int j=0; j<adjMatrix.size(); j++)
+        {
+            if(adjMatrix[i][j] < minValue)
+            {
+                minValue = adjMatrix[i][j];
+                indices.first = i;
+                indices.second = j;
+            }
+        }
+
+        indexPair.push_back(indices);
 
         if(minValue != 0 && minValue != INT_MAX)
         {
@@ -104,8 +128,12 @@ int find_RowCol_Min()
             if(adjMatrix[j][i] < minValue)
             {
                 minValue = adjMatrix[j][i];
+                indices.first = i;
+                indices.second = j;
             }
         }
+
+        indexPair.push_back(indices);
 
         if(minValue != 0 && minValue != INT_MAX)
         {
@@ -128,6 +156,29 @@ int find_RowCol_Min()
     return rowMin + colMin;
 }
 
+Tree* create(int costOfNode)
+{
+    Tree *node = new Tree;
+
+    node -> cost = find_RowCol_Min();
+    node -> left = NULL;
+    node -> right = NULL;
+
+    return node;
+}
+
+void findPenalty()
+{
+                                                                                                        /*  pair : (penalty, index) - sorting based on first elements */
+    pair <int, pair<int, int>> indexPair;
+
+    for(int i=0; i<adjMatrix.size(); i++)
+    {
+        ;
+    }
+
+}
+
 int main()
 {
     int lowerBound = 0;
@@ -135,6 +186,12 @@ int main()
     display();
 
     cout<<find_RowCol_Min();
+    lowerBound = find_RowCol_Min();
+
+
+    display();
+
+    root = create(lowerBound);
 
 
 
